@@ -1,10 +1,7 @@
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 import string
-# ---------------------------- SAVE PASSWORD ------------------------------- #
-
-# ---------------------------- UI SETUP ------------------------------- #
-
 from tkinter import *
+import tkinter.messagebox
 from random import choice, shuffle
 import string
 
@@ -29,6 +26,7 @@ def gen_password():
     # return password
 
 
+# ---------------------------- SAVE PASSWORD ------------------------------- #
 # Add an Entry
 def add_entry():
     global websiteentry, userentry, passentry
@@ -36,13 +34,21 @@ def add_entry():
     user = userentry.get()
     password = passentry.get()
     print(website, user, password)
-    write_file(website, user, password)
+    if len(website) == 0 or len(user) == 0 or len(password) == 0:
+        tkinter.messagebox.showwarning('Error', 'All fields must be filled!')
+    else:
+        write_file(website, user, password)
+        websiteentry.delete(0, END)
+        passentry.delete(0, END)
 
 
 # Write to file
 def write_file(website, user, password):
     with open(file='pw.txt', mode='a') as pwfile:
         pwfile.write(f'{website} | {user} | {password} \n')
+
+
+# ---------------------------- UI SETUP ------------------------------- #
 
 
 window = Tk()
