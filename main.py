@@ -2,7 +2,7 @@
 import string
 from tkinter import *
 import tkinter.messagebox
-from random import choice, shuffle
+from random import choice, shuffle, sample, randint
 import string
 
 
@@ -12,12 +12,13 @@ def gen_password():
     letters_lower = string.ascii_lowercase
     letters_upper = string.ascii_uppercase
     symbols = ['!', '§', '$', '%', '%', '&', '/', '(', ')', '=']
-    numbers = range(0, 10)
+    numbers = [str(i) for i in range(0, 10)]
     for _ in range(4):
-        password += choice(letters_upper)
-        password += choice(letters_lower)
-        password += str(choice(numbers))
-        password += choice(symbols)
+        password_upper = sample(letters_upper, randint(2, 5))
+        password_lower = sample(letters_lower, randint(2, 5))
+        password_number = sample(numbers, randint(2, 5))
+        password_symbols = sample(symbols, randint(3, 8))
+        password = password_upper + password_lower + password_number + password_symbols
     password = list(password)
     shuffle(password)
     password = ''.join(password)
@@ -33,19 +34,24 @@ def add_entry():
     website = websiteentry.get()
     user = userentry.get()
     password = passentry.get()
-    print(website, user, password)
+    # print(website, user, password)
     if len(website) == 0 or len(user) == 0 or len(password) == 0:
         tkinter.messagebox.showwarning('Error', 'All fields must be filled!')
     else:
         write_file(website, user, password)
-        websiteentry.delete(0, END)
-        passentry.delete(0, END)
+        delete_entries()
 
 
 # Write to file
 def write_file(website, user, password):
     with open(file='pw.txt', mode='a') as pwfile:
         pwfile.write(f'{website} | {user} | {password} \n')
+        tkinter.messagebox.showinfo('Success!', 'Entry added!')
+
+
+def delete_entries():
+    websiteentry.delete(0, END)
+    passentry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -64,7 +70,7 @@ logo_can.grid(column=1, row=1)
 
 # Website Data
 
-lwebsite = Label(text='Website: ', bg='white', anchor='center')
+lwebsite = Label(text='Website: ', bg='white', anchor='center', highlightbackground='white')
 lwebsite.grid(column=0, row=2, sticky='w')
 websiteentry = Entry(width=35)
 websiteentry.focus()
@@ -74,7 +80,7 @@ websiteentry.grid(column=1, row=2, columnspan=2, sticky='w')
 
 lusername = Label(text='Email/Username: ', bg='white', anchor='center')
 lusername.grid(column=0, row=3, sticky='w')
-userentry = Entry(width=35)
+userentry = Entry(width=35, bd=0)
 userentry.grid(column=1, row=3, columnspan=2, sticky='w')
 userentry.insert(0, 'bla@mail.com')
 
@@ -82,7 +88,7 @@ userentry.insert(0, 'bla@mail.com')
 
 lpass = Label(text='Password: ', bg='white', anchor='center')
 lpass.grid(column=0, row=4, sticky='w')
-passentry = Entry(width=21)
+passentry = Entry(width=21, highlightthickness=0)
 passentry.grid(column=1, row=4, columnspan=1, sticky='w')
 passbutton = Button(text='Generate Password', width=10, background='white', command=gen_password)
 passbutton.grid(column=2, row=4, sticky='w')
