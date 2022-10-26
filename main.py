@@ -86,7 +86,8 @@ def find_password(website):
                 print('Website not found')
             else:
                  # return output
-                tkinter.messagebox.showinfo('title', f'{output[2]} ')
+                tkinter.messagebox.showinfo('Credentials', f'user is "{output[1]}", '
+                                                           f'password is \n{output[2]} for {website}')
     except FileNotFoundError:
         msg = 'Keine Datei gefunden'
         return msg
