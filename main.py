@@ -61,7 +61,7 @@ def delete_entries():
 
 window = Tk()
 window.config(padx=20, pady=20, background='white')
-window.title('Password Manager')
+window.title('Tiny Password Manager')
 logo_can = Canvas(window, background='white', width=200, height=200, highlightthickness=0)
 # logo_can.grid(column=1, row=1, padx=20, pady=20)
 logo_img = PhotoImage(file='logo.png')
