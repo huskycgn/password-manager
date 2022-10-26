@@ -35,7 +35,7 @@ def gen_password():
 # Add an Entry
 def add_entry():
     global websiteentry, userentry, passentry, new_data
-    website = websiteentry.get()
+    website = websiteentry.get().lower()
     user = userentry.get()
     password = passentry.get()
     new_data = {
@@ -47,12 +47,12 @@ def add_entry():
     if len(website) == 0 or len(user) == 0 or len(password) == 0:
         tkinter.messagebox.showwarning('Error', 'All fields must be filled!')
     else:
-        write_file(website, user, password)
+        write_file()
         delete_entries()
 
 
 # Write to file
-def write_file(website, user, password):
+def write_file():
     try:
         with open(file='pw.json', mode='r') as pwfile:
             # reading old data
@@ -76,6 +76,7 @@ def delete_entries():
 
 
 def find_password(website):
+    website = website.lower()
     try:
         with open(file='pw.json', mode='r') as pwfile:
             # reading data
@@ -83,13 +84,13 @@ def find_password(website):
             try:
                 output = (website, data[website]['email'], data[website]['password'])
             except KeyError:
-                print('Website not found')
+                tkinter.messagebox.showerror('Error', f'{website} not found')
             else:
-                 # return output
+                # return output
                 tkinter.messagebox.showinfo('Credentials', f'user is "{output[1]}", '
                                                            f'password is \n{output[2]} for {website}')
     except FileNotFoundError:
-        msg = 'Keine Datei gefunden'
+        msg = 'File not found'
         return msg
 
 
