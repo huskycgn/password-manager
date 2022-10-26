@@ -5,6 +5,9 @@ import tkinter.messagebox
 from random import choice, shuffle, sample, randint
 import string
 import pyperclip
+import json
+
+new_data = {}
 
 
 # Generate a password
@@ -12,7 +15,7 @@ def gen_password():
     password = ''
     letters_lower = string.ascii_lowercase
     letters_upper = string.ascii_uppercase
-    symbols = ['!', '§', '$', '%', '%', '&', '/', '(', ')', '=']
+    symbols = ['!', '@', '$', '%', '%', '&', '/', '(', ')', '=']
     numbers = [str(i) for i in range(0, 10)]
     for _ in range(4):
         password_upper = sample(letters_upper, randint(2, 5))
@@ -32,10 +35,15 @@ def gen_password():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 # Add an Entry
 def add_entry():
-    global websiteentry, userentry, passentry
+    global websiteentry, userentry, passentry, new_data
     website = websiteentry.get()
     user = userentry.get()
     password = passentry.get()
+    new_data = {
+        website: {
+            'email': user,
+            'password': password,
+        }}
     # print(website, user, password)
     if len(website) == 0 or len(user) == 0 or len(password) == 0:
         tkinter.messagebox.showwarning('Error', 'All fields must be filled!')
@@ -46,8 +54,15 @@ def add_entry():
 
 # Write to file
 def write_file(website, user, password):
-    with open(file='pw.txt', mode='a') as pwfile:
-        pwfile.write(f'{website} | {user} | {password} \n')
+    with open(file='pw.json', mode='r') as pwfile:
+        # reading old data
+        data = json.load(pwfile)
+        # Updating old data with new data
+        data.update(new_data)
+
+    with open(file='pw.json', mode='w') as pwfile:
+        # saving updated data
+        json.dump(data, pwfile, indent=4)
         tkinter.messagebox.showinfo('Success!', 'Entry added!')
 
 
