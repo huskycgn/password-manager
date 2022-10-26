@@ -1,11 +1,10 @@
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
-import string
-from tkinter import *
-import tkinter.messagebox
-from random import choice, shuffle, sample, randint
-import string
-import pyperclip
 import json
+import string
+import tkinter.messagebox
+from random import shuffle, sample, randint
+from tkinter import *
+import pyperclip
 
 new_data = {}
 
@@ -54,21 +53,43 @@ def add_entry():
 
 # Write to file
 def write_file(website, user, password):
-    with open(file='pw.json', mode='r') as pwfile:
-        # reading old data
-        data = json.load(pwfile)
-        # Updating old data with new data
-        data.update(new_data)
-
-    with open(file='pw.json', mode='w') as pwfile:
-        # saving updated data
-        json.dump(data, pwfile, indent=4)
-        tkinter.messagebox.showinfo('Success!', 'Entry added!')
+    try:
+        with open(file='pw.json', mode='r') as pwfile:
+            # reading old data
+            data = json.load(pwfile)
+            # Updating old data with new data
+            data.update(new_data)
+    except FileNotFoundError:
+        with open(file='pw.json', mode='w') as pwfile:
+            json.dump(new_data, pwfile, indent=4)
+            tkinter.messagebox.showinfo('Success!', 'Entry added!')
+    else:
+        with open(file='pw.json', mode='w') as pwfile:
+            # saving updated data
+            json.dump(data, pwfile, indent=4)
+            tkinter.messagebox.showinfo('Success!', 'Entry added!')
 
 
 def delete_entries():
     websiteentry.delete(0, END)
     passentry.delete(0, END)
+
+
+def find_password(website):
+    try:
+        with open(file='pw.json', mode='r') as pwfile:
+            # reading data
+            data = json.load(pwfile)
+            try:
+                output = (website, data[website]['email'], data[website]['password'])
+            except KeyError:
+                print('Website not found')
+            else:
+                 # return output
+                tkinter.messagebox.showinfo('title', f'{output[2]} ')
+    except FileNotFoundError:
+        msg = 'Keine Datei gefunden'
+        return msg
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -89,9 +110,9 @@ logo_can.grid(column=1, row=1)
 
 lwebsite = Label(text='Website: ', bg='white', anchor='center', highlightbackground='white')
 lwebsite.grid(column=0, row=2, sticky='w')
-websiteentry = Entry(width=35)
+websiteentry = Entry(width=21)
 websiteentry.focus()
-websiteentry.grid(column=1, row=2, columnspan=2, sticky='w')
+websiteentry.grid(column=1, row=2, columnspan=1, sticky='w')
 
 # Username Stuff
 
@@ -112,5 +133,10 @@ passbutton.grid(column=2, row=4, sticky='w')
 
 addbutton = Button(text='Add', anchor='center', width=36, command=add_entry)
 addbutton.grid(column=1, row=5, columnspan=2)
+
+# Search button
+
+searchbutton = Button(text='Search', width=10, background='white', command=lambda: find_password(websiteentry.get()))
+searchbutton.grid(column=2, row=2, sticky='w')
 
 window.mainloop()
